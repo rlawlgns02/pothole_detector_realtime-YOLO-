@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 포트홀 감지 시스템</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 알람 사운드 -->
+    <audio id="alarmSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGJ0fPTgjMGHm7A7+OZTR0HUqjk77djHAY6ktfzzH0tBSl+zPLaizsKGGS66+mjUgwMS6Lh8bllHAU4jtP00H8vBSt9zPPajDoIGWW/7+OfTA0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0MS6Lf87hjGwY4ktfyz4AuBSyAzvPYizcGGWW/7+SfSw0="></source>
+    </audio>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🚗</div>
+                <h1>실시간 포트홀 감지 시스템</h1>
+            </div>
+            <div class="status-indicator" id="systemStatus">
+                <span class="status-dot active"></span>
+                <span>시스템 활성</span>
+            </div>
+        </header>
+
+        <!-- 경고 알람 배너 -->
+        <div class="alert-banner" id="alertBanner">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                <h2>포트홀 발견됨!</h2>
+                <p>도로에 포트홀이 감지되었습니다. 주의하세요!</p>
+            </div>
+            <div class="alert-count" id="alertCount">0</div>
+        </div>
+
+        <!-- 메인 그리드 -->
+        <div class="main-grid">
+            <!-- 비디오 섹션 -->
+            <div class="section video-section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📹</span>
+                        실시간 카메라
+                    </h2>
+                    <div class="controls">
+                        <button id="soundToggle" class="btn-icon" title="소리 끄기/켜기">
+                            🔊
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="video-container">
+                    <img id="videoStream" src="/video_feed" alt="Video Stream">
+                    <div class="video-overlay" id="videoOverlay">
+                        <div class="loading-spinner"></div>
+                        <p>카메라 연결 중...</p>
+                    </div>
+                </div>
+
+                <div class="video-info">
+                    <div class="info-item">
+                        <span class="info-label">해상도:</span>
+                        <span class="info-value">640 x 480</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">FPS:</span>
+                        <span class="info-value" id="fpsDisplay">30</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">감지 모드:</span>
+                        <span class="info-value">YOLOv8n</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 통계 섹션 -->
+            <div class="section stats-section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📊</span>
+                        감지 통계
+                    </h2>
+                </div>
+
+                <!-- 모델 성능 카드 -->
+                <div class="model-performance">
+                    <h3>모델 성능</h3>
+                    <div class="performance-grid">
+                        <div class="perf-item">
+                            <div class="perf-label">mAP@0.5</div>
+                            <div class="perf-value">78.1%</div>
+                        </div>
+                        <div class="perf-item">
+                            <div class="perf-label">Precision</div>
+                            <div class="perf-value">100%</div>
+                        </div>
+                        <div class="perf-item">
+                            <div class="perf-label">Recall</div>
+                            <div class="perf-value">85%</div>
+                        </div>
+                        <div class="perf-item">
+                            <div class="perf-label">F1-Score</div>
+                            <div class="perf-value">75%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 실시간 통계 -->
+                <div class="live-stats">
+                    <div class="stat-card card-red">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">현재 감지</div>
+                            <div class="stat-value" id="currentDetections">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card card-blue">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-label">총 감지 수</div>
+                            <div class="stat-value" id="totalDetections">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card card-green">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-label">감지율</div>
+                            <div class="stat-value" id="detectionRate">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card card-purple">
+                        <div class="stat-icon">🖼️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">처리 프레임</div>
+                            <div class="stat-value" id="totalFrames">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 감지 히스토리 -->
+                <div class="detection-history">
+                    <h3>최근 감지 기록</h3>
+                    <div class="history-list" id="historyList">
+                        <div class="history-empty">
+                            감지 기록이 없습니다
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>YOLOv8n 실시간 객체 감지 • Flask Backend • OpenCV</p>
+            <p class="footer-warning">⚠️ 운전 중에는 절대 이 시스템을 사용하지 마세요</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
